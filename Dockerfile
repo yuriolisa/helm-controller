@@ -32,15 +32,17 @@ COPY internal/ internal/
 ENV CGO_ENABLED=0
 RUN xx-go build -a -o helm-controller main.go
 
-FROM alpine:3.15
+FROM registry.access.redhat.com/ubi8/ubi
+#FROM alpine:3.15
 
 # link repo to the GitHub Container Registry image
 LABEL org.opencontainers.image.source="https://github.com/fluxcd/helm-controller"
 
-RUN apk add --no-cache ca-certificates tini
+ARG TARGETPLATFORM
+RUN yum install -y ca-certificates
 
 COPY --from=builder /workspace/helm-controller /usr/local/bin/
 
 USER 65534:65534
 
-ENTRYPOINT [ "/sbin/tini", "--", "helm-controller" ]
+ENTRYPOINT [ "helm-controller" ]

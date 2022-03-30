@@ -32,7 +32,7 @@ COPY internal/ internal/
 ENV CGO_ENABLED=0
 RUN xx-go build -a -o helm-controller main.go
 
-FROM registry.access.redhat.com/ubi8/ubi
+FROM registry.access.redhat.com/ubi8/ubi@sha256:56c374376a42da40f3aec753c4eab029b5ea162d70cb5f0cda24758780c31d81
 
 # link repo to the GitHub Container Registry image
 LABEL org.opencontainers.image.source="https://github.com/fluxcd/helm-controller"
@@ -41,6 +41,7 @@ ARG TARGETPLATFORM
 RUN yum install -y ca-certificates
 
 COPY --from=builder /workspace/helm-controller /usr/local/bin/
+COPY LICENSE /licenses/LICENSE
 
 USER 65534:65534
 
